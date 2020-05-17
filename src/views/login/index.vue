@@ -8,9 +8,9 @@
         <span class="sub-title">用户登录</span>
       </div>
       <!-- form表单部分 -->
-      <el-form class="login-form" :model="ruleForm" :rules="rules">
-        <el-form-item prop="number">
-          <el-input placeholder="请输入手机号" v-model="ruleForm.number">
+      <el-form class="login-form" :model="ruleForm" :rules="rules" ref="ruleForm">
+        <el-form-item prop="phone">
+          <el-input placeholder="请输入手机号" v-model="ruleForm.phone">
             <i slot="prefix" class="el-input__icon el-icon-user"></i>
           </el-input>
         </el-form-item>
@@ -27,10 +27,7 @@
               </el-input>
             </el-col>
             <el-col :span="8">
-              <img
-                class="captcha"
-                src="http://47.106.148.205/heimamm/public/captcha?type=login&random=0.1115232862923281"
-              />
+              <img class="captcha" :src="codeURL" @click="codeRefresh" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -40,7 +37,7 @@
           <el-link type="primary" href="http://www.baidu.com">隐私条款</el-link>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="width:100%">登录</el-button>
+          <el-button type="primary" style="width:100%" @click="submitForm('ruleForm')">登录</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" style="width:100%">注册</el-button>
@@ -58,15 +55,16 @@ export default {
   name: "login",
   data() {
     return {
+      codeURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
       ruleForm: {
-        number: "",
-        checked: false,
-        password: "",
+        phone: "18511111111",
+        checked: true,
+        password: "12345678",
         code: ""
       },
       rules: {
         // 校验规则
-        number: [
+        phone: [
           // 是个数组，代表这个里面可以写多个校验规则
           // { required: true, message: "必须输入手机号", trigger: "blur" },
           // { min: 11, max: 11, message: "手机号必须是11位", trigger: "blur" }
@@ -115,6 +113,38 @@ export default {
         ]
       }
     };
+  },
+  methods: {
+    codeRefresh() {
+      this.codeURL =
+        process.env.VUE_APP_BASEURL +
+        "/captcha?type=login&xxx=" +
+        Math.random();
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return;
+        this.$axios({
+          method: "post",
+          url: "/login",
+          data: this.ruleForm
+        }).then(res => {
+          console.log(res.data);
+          if (res.data.code == 200) {
+            this.$message({
+              message: "登录成功",
+              type: "success"
+            });
+          } else {
+            this.$message.error(res.data.message);
+            this.codeURL =
+              process.env.VUE_APP_BASEURL +
+              "/captcha?type=login&xxx=" +
+              Math.random();
+          }
+        });
+      });
+    }
   }
 };
 </script>
