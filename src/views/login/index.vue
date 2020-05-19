@@ -40,19 +40,25 @@
           <el-button type="primary" style="width:100%" @click="submitForm('ruleForm')">登录</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="width:100%">注册</el-button>
+          <el-button type="primary" style="width:100%" @click="registerClick">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="right">
       <img src="@/assets/login_bg.png" alt />
     </div>
+    <register ref="registerRef"></register>
   </div>
 </template>
 
 <script>
+import { setToken } from "@/utils/token.js";
+import register from "./register.vue";
 export default {
   name: "login",
+  components: {
+    register
+  },
   data() {
     return {
       codeURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
@@ -115,6 +121,9 @@ export default {
     };
   },
   methods: {
+    registerClick() {
+      this.$refs.registerRef.dialogVisible = true;
+    },
     codeRefresh() {
       this.codeURL =
         process.env.VUE_APP_BASEURL +
@@ -122,9 +131,9 @@ export default {
         Math.random();
     },
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate(async valid => {
         if (!valid) return;
-        this.$axios({
+        /* this.$axios({
           method: "post",
           url: "/login",
           data: this.ruleForm
@@ -142,7 +151,26 @@ export default {
               "/captcha?type=login&xxx=" +
               Math.random();
           }
+        }); */
+        let res = await this.$axios({
+          method: "post",
+          url: "/login",
+          data: this.ruleForm
         });
+        if (res.data.code == 200) {
+          setToken(res.data.data.token);
+          this.$message({
+            message: "登录成功",
+            type: "success"
+          });
+          this.$router.push("/layout");
+        } else {
+          this.$message.error(res.data.message);
+          this.codeURL =
+            process.env.VUE_APP_BASEURL +
+            "/captcha?type=login&xxx=" +
+            Math.random();
+        }
       });
     }
   }
