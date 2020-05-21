@@ -14,7 +14,12 @@
     </el-header>
     <el-container>
       <el-aside width="auto">
-        <el-menu router default-active="3" class="el-menu-vertical-demo" :collapse="isCollapse">
+        <el-menu
+          router
+          :default-active="defaultActive"
+          class="el-menu-vertical-demo"
+          :collapse="isCollapse"
+        >
           <!-- default-active="3"默认高亮  index="1"唯一标识    :collapse="isCollapse"展开收起-->
           <el-menu-item index="/layout/chart">
             <i class="el-icon-pie-chart"></i>
@@ -54,11 +59,14 @@ export default {
     return {
       isCollapse: false,
       avatar: "",
-      username: ""
+      username: "",
+      defaultActive: "" //默认高亮页面
     };
   },
   created() {
     this.getUser();
+    // console.log(this.$route);
+    this.defaultActive = this.$route.fullPath;
   },
   methods: {
     //获取用户信息
