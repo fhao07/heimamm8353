@@ -43,7 +43,7 @@
         </el-table-column>
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <el-button type="default" @click="editUser">编辑</el-button>
+            <el-button type="default" @click="editUser(scope.row)">编辑</el-button>
             <el-button
               @click="toggleState(scope.row.id)"
               :type="scope.row.status===0? 'success' :'info'"
@@ -90,6 +90,7 @@ export default {
   },
   created() {
     this.getUserList();
+    console.log(this);
   },
   methods: {
     async getUserList() {
@@ -165,12 +166,28 @@ export default {
         });
     },
     addUser() {
+      this.$refs.UserEditRef.userForm = {
+        username: "", // 用户名
+        email: "", // 邮箱
+        phone: "", // 手机号
+        role_id: "", // 角色 1：超级管理员 2：管理员 3：老师 4：学生
+        status: "", // 状态 1：启用 0：禁用
+        remark: "" // 备注
+      };
+      this.$nextTick(() => {
+        this.$refs.UserEditRef.$refs.userEditFormRef.clearValidate();
+      });
       this.$refs.UserEditRef.dialogVisible = true;
       this.$refs.UserEditRef.mode = "add";
     },
-    editUser() {
+    editUser(row) {
+      // this.$refs.UserEditRef.userForm = { ...row };
+      this.$refs.UserEditRef.userForm = JSON.parse(JSON.stringify(row));
       this.$refs.UserEditRef.dialogVisible = true;
       this.$refs.UserEditRef.mode = "edit";
+      this.$nextTick(() => {
+        this.$refs.UserEditRef.$refs.userEditFormRef.clearValidate();
+      });
     }
   }
 };

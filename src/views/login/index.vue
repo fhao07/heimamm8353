@@ -163,7 +163,7 @@ export default {
             message: "登录成功",
             type: "success"
           });
-          this.$router.push("/layout");
+          this.$router.push("/layout/user");
         } else {
           this.$message.error(res.data.message);
           this.codeURL =

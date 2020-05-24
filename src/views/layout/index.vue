@@ -9,7 +9,7 @@
       <div class="right">
         <img :src="avatar" alt />
         <span class="name">{{ username }} 欢迎您</span>
-        <el-button type="primary">退出</el-button>
+        <el-button type="primary" @click="clickQuit">退出</el-button>
       </div>
     </el-header>
     <el-container>
@@ -66,7 +66,7 @@ export default {
   created() {
     this.getUser();
     // console.log(this.$route);
-    this.defaultActive = this.$route.fullPath;
+    this.defaultActive = this.$route.fullPath; //== "/layout" ? "/layout/user" : this.$route.fullPath;
   },
   methods: {
     //获取用户信息
