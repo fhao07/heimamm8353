@@ -75,7 +75,7 @@ export default {
   },
   watch: {
     dialogVisible(newValue) {
-      console.log(newValue);
+      // console.log(newValue);
       if (!newValue) {
         this.$refs.ruleForm.clearValidate();
       }
