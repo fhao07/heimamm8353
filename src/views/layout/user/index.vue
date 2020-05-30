@@ -45,7 +45,7 @@
           <template slot-scope="scope">
             <el-button type="default" @click="editUser(scope.row)">编辑</el-button>
             <el-button
-              @click="toggleState(scope.row.id)"
+              @click="toggleState('/user/status',scope.row.id,getUserList)"
               :type="scope.row.status===0? 'success' :'info'"
             >{{scope.row.status===0? '启用' :'禁用'}}</el-button>
             <el-button type="default" @click="removeUser(scope.row.id)">删除</el-button>
@@ -69,8 +69,10 @@
 </template>
 
 <script>
+import commot from "@/mixins/commot";
 import UserEdit from "./user-edit-or-add";
 export default {
+  mixins: [commot],
   name: "user",
   components: {
     UserEdit
@@ -124,7 +126,7 @@ export default {
       this.$refs.ValidateForm.resetFields();
       this.search();
     },
-    async toggleState(id) {
+    /*  async toggleState(id) {
       let res = await this.$axios.post("/user/status", { id });
       console.log(res);
       if (res.data.code === 200) {
@@ -141,7 +143,7 @@ export default {
           type: "error"
         });
       }
-    },
+    }, */
     removeUser(id) {
       this.$confirm("此操作将删除该用户, 是否继续?", "提示", {
         confirmButtonText: "确定",
